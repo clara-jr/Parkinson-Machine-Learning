@@ -55,3 +55,6 @@ for cont in range(len(params)):
 
 print "Optimal C = " + str(params[0])
 print "Optimal L = " + str(params[1])
+
+print "Retraining model C = " + str(params[0]) + " and L =" + str(params[1])
+os.system('./baseline_train_devel.sh '+str(params[0])+' '+str(params[1]))
