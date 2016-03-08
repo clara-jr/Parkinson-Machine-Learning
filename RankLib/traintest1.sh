@@ -2,6 +2,7 @@
 TRAIN=${10}
 TEST=${11}
 MODEL1=${12}
+PRED=${13}
 BAG=${1}
 TC=${2}
 ESTOP=${3}
@@ -21,7 +22,7 @@ SHRINKAGE=${9}
 #8 	[ -leaf <l> ]	Number of leaves for each tree (default=100)
 #9 	[ -shrinkage <factor> ]	Shrinkage, or learning rate (default=0.1)
 
-PREDICTED=eval/train_devel/$TEST.bag-$BAG-tc-$TC-es-$ESTOP-ml-$MLS-sr-$SRATE-fr-$FRATE-tr-$TREE-le-$LEAF-sh-$SHRINKAGE.pred
+PREDICTED=eval/train_devel/${PRED}.bag-$BAG-tc-$TC-es-$ESTOP-ml-$MLS-sr-$SRATE-fr-$FRATE-tr-$TREE-le-$LEAF-sh-$SHRINKAGE.pred
 MODEL=models/train_devel/${MODEL1}.b-$BAG-tc-$TC-es-$ESTOP-ml-$MLS-sr-$SRATE-fr-$FRATE-tr-$TREE-le-$LEAF-sh-$SHRINKAGE.model
 DEP=eval/train_devel/${MODEL1}.b-$BAG-tc-$TC-es-$ESTOP-ml-$MLS-sr-$SRATE-fr-$FRATE-tr-$TREE-le-$LEAF-sh-$SHRINKAGE.dep
 

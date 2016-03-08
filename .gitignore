@@ -1,4 +1,4 @@
-arff2
+data
 baseline2/eval
 baseline2/models
 baseline2/pruebas.dep
@@ -7,9 +7,7 @@ baseline2/nohup.out
 RankLib/eval
 RankLib/models
 RankLib/bin
-RankLib/ComParE2015_Parkinson.train_noName.arff.libsvm.normalized.libsvm
-RankLib/ComParE2015_Parkinson.devel_noName.arff.libsvm.normalized.libsvm
-RankLib/ComParE2015_Parkinson_mfc18_elasso_f20.train.libsvm
-RankLib/ComParE2015_Parkinson_mfc18_elasso_f20.devel.libsvm
 RankLib/print.dep
 RankLib/nohup.out
+opensmile/openSMILE-2.2rc1
+opensmile/wavs

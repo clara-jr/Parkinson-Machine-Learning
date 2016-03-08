@@ -23,13 +23,14 @@ def frange(start, stop, step=1.0):
 
 # Greedy
 
-TRAIN = "ComParE2015_Parkinson_mfc18_elasso_f20.train.libsvm"
-MODEL1 = TRAIN
-TEST = "ComParE2015_Parkinson_mfc18_elasso_f20.devel.libsvm"
+TRAIN = "../data/ComParE2015_Parkinson_mfc18_elasso_f20.train.libsvm"
+TEST = "../data/ComParE2015_Parkinson_mfc18_elasso_f20.devel.libsvm"
+MODEL1 = "ComParE2015_Parkinson_mfc18_elasso_f20.train.libsvm"
+PRED = "ComParE2015_Parkinson_mfc18_elasso_f20.devel.libsvm"
 
 params = [300, 256, 100, 1, 1.0, 0.2, 1, 100, 0.1]
 # .bag-300-tc-256-es-100-ml-1-sr-1.0-fr-0.2-tr-1-le-100-sh-0.1
-# parallel -j 2 ./traintest1.sh {1} {2} {3} {4} {5} {6} {7} {8} {9} $TRAIN $TEST $MODEL1 ::: 100 200 300 ::: 200 256 312 ::: 50 100 150 ::: 1 2 3 ::: 0.5 1.0 1.5 ::: 0.1 0.2 0.3 0.4 ::: 1 2 3 ::: 50 100 150 200 ::: 0.05 0.1 0.15 0.2 0.25
+# parallel -j 2 ./traintest1.sh {1} {2} {3} {4} {5} {6} {7} {8} {9} $TRAIN $TEST $MODEL1 $PRED ::: 100 200 300 ::: 200 256 312 ::: 50 100 150 ::: 1 2 3 ::: 0.5 1.0 1.5 ::: 0.1 0.2 0.3 0.4 ::: 1 2 3 ::: 50 100 150 200 ::: 0.05 0.1 0.15 0.2 0.25
 init = [100, 200, 50, 1, 0.5, 0.1, 1, 50, 0.05]
 end = [301, 313, 151, 4, 1.6, 0.5, 4, 201, 0.3]
 step = [100, 56, 50, 1, 0.5, 0.1, 1, 50, 0.05]
@@ -43,7 +44,7 @@ if os.path.exists('traintest1.sh'):
         values = []
         spearman = []
         string = []
-        parallel = "parallel -j " + str(experiments[cont]) + " ./traintest1.sh {1} {2} {3} {4} {5} {6} {7} {8} {9} " + TRAIN + " " + TEST + " " + MODEL1
+        parallel = "parallel -j " + str(experiments[cont]) + " ./traintest1.sh {1} {2} {3} {4} {5} {6} {7} {8} {9} " + TRAIN + " " + TEST + " " + MODEL1 + " " + PRED
         for i in range(len(params)):
             string.append(" ::: " + str(params[i]))
         string[cont] = " :::"
@@ -91,7 +92,7 @@ if os.path.exists('traintest1.sh'):
 
     f.write("Retraining final model BAG="+str(params[0])+" TC="+str(params[1])+" ESTOP="+str(params[2])+" MLS="+str(params[3])+" SRATE="+str(params[4])+" FRATE="+str(params[5])+" TREE="+str(params[6])+" LEAF="+str(params[7])+" SHRINKAGE="+str(params[8]) + "\n")
     f.close()
-    os.system("./traintest1.sh "+str(params[0])+" "+str(params[1])+" "+str(params[2])+" "+str(params[3])+" "+str(params[4])+" "+str(params[5])+" "+str(params[6])+" "+str(params[7])+" "+str(params[8])+" "+TRAIN+" "+TEST+" "+MODEL1)
+    os.system("./traintest1.sh "+str(params[0])+" "+str(params[1])+" "+str(params[2])+" "+str(params[3])+" "+str(params[4])+" "+str(params[5])+" "+str(params[6])+" "+str(params[7])+" "+str(params[8])+" "+TRAIN+" "+TEST+" "+MODEL1+" "+PRED)
     file = open('eval/train_devel/results-'+MODEL1+'.b-'+str(params[0])+'-tc-'+str(params[1])+'-es-'+str(params[2])+'-ml-'+str(params[3])+'-sr-'+str(params[4])+'-fr-'+str(params[5])+'-tr-'+str(params[6])+'-le-'+str(params[7])+'-sh-'+str(params[8])+'.dep', 'r')
     data = file.readlines();
     for x in data:
@@ -103,7 +104,7 @@ if os.path.exists('traintest1.sh'):
 
     f.write("Retraining initial model BAG=300 TC=256 ESTOP=100 MLS=1 SRATE=1.0 FRATE=0.2 TREE=1 LEAF=100 SHRINKAGE=0.1 \n")
     f.close()
-    os.system("./traintest1.sh 300 256 100 1 1.0 0.2 1 100 0.1 "+TRAIN+" "+TEST+" "+MODEL1)
+    os.system("./traintest1.sh 300 256 100 1 1.0 0.2 1 100 0.1 "+TRAIN+" "+TEST+" "+MODEL1+" "+PRED)
     file = open('eval/train_devel/results-'+MODEL1+'.b-300-tc-256-es-100-ml-1-sr-1.0-fr-0.2-tr-1-le-100-sh-0.1.dep', 'r')
     data = file.readlines();
     for x in data:

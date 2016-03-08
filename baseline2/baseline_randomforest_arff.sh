@@ -32,12 +32,12 @@ jvm_mem=4096m
 #-Xmx$jvm_mem
 
 # svr complexity constant
-C=$1
-test -z "$C" && C=1.0E-3
+I=$1
+test -z "$I" && I=100
 
 #epsilon-intensive loss
-L=$2
-test -z "$L" && L=1.0
+S=$2
+test -z "$S" && S=1
 
 lab=6375
 
@@ -46,18 +46,18 @@ devel_arff=$feat_dir/$feat_name.devel.arff
 test_arff=$feat_dir/$feat_name.test.arff
 
 # model file name
-svr_model_name=$model_dir/$feat_name.train.SVR.C$C.L$L.model
+svr_model_name=$model_dir/$feat_name.train.RandomForest.I$I.S$S.model
 
 # train svr using Weka's SMOreg, using FilteredClassifier wrapper to ignore first attribute (instance name)
 #if [ ! -f "$svr_model_name" ]; then
      echo "training model" >> pruebas.dep
-     java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -v -o -no-cv -c last -t "$train_arff" -d "$svr_model_name" -F "weka.filters.unsupervised.attribute.Remove -R 1" -W weka.classifiers.functions.SMOreg -- -C $C -N 1 -I "weka.classifiers.functions.supportVector.RegSMOImproved -L $L -W 1 -P 1.0E-12 -T 0.001 -V" -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0" || exit 1
+     java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -v -o -no-cv -c last -t "$train_arff" -d "$svr_model_name" -F "weka.filters.unsupervised.attribute.Remove -R 1" -W weka.classifiers.trees.RandomForest -- -I $I -K 0 -S $S || exit 1
 #fi
 
 echo "finished train model" >> pruebas.dep
 
 # evaluate svr and write predictions
-pred_file=$eval_dir/$feat_name.SVR.C$C.L$L.pred
+pred_file=$eval_dir/$feat_name.RandomForest.I$I.S$S.pred
 #if [ ! -s "$pred_file" ]; then
     java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -c last -l "$svr_model_name" -T "$devel_arff" -p 0 -distribution > "$pred_file" || exit 1
 #fi
@@ -79,14 +79,3 @@ fi
 tail -2 $result_file
 echo "Finish" >> pruebas.dep
 exit 0
-
-# test predictions
-pred_test_file=$eval_dir/$feat_name.SVR.C$C.L$L.test.pred
-
-java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -c last -l "$svr_model_name" -T "$test_arff" -p 0 -distribution > "$pred_test_file" || exit 1
-
-echo "Normalized intra-speaker variance (C=$C): $(perl score_reg5spk.pl XXX $pred_test_file XXX)"
-#perl format_pred2.pl <$pred_test_file >$pred_test_file.pred2
-#perl score_reg5spk.pl XXX $pred_test_file XXX
-
-echo "finished test"

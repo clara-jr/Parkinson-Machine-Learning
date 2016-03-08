@@ -6,14 +6,14 @@ require "spearman.pl";
 
 sub parse_predictions_reg {
     my $ref_arff = shift;
-    my $pred_arff = shift;
+    my $pred_file = shift;
     my $pred_index = shift;
     my $lab_index = shift;
     my @pred;
     my @ref;
     my $i = 0;
     my $data = 0;
-    open(PRED, "<$pred_arff") or die "$pred_arff: $!";
+    open(PRED, "<$pred_file") or die "$pred_file: $!";
     while(<PRED>) {
         chomp;
         if (/^[\s\t]+\d+[\s\t]+/){
@@ -25,8 +25,8 @@ sub parse_predictions_reg {
         }
     }
     close(PRED);
-    
-   
+
+
     printf "Pearson correlation coefficient: %.7f\n", cor(\@pred, \@ref);
     printf "Spearman correlation coefficient: %.7f\n", cor(rank(\@pred), rank(\@ref));
 
@@ -36,12 +36,11 @@ sub parse_predictions_reg {
 my $pred_index = 3; # set to 2 if frame index is included
 
 if ($#ARGV < 2) {
-    print "Usage: $0 <ref_arff> <pred_arff> <lab-index> [ignore-list]\n";
+    print "Usage: $0 <ref_arff> <pred_file> <lab-index> [ignore-list]\n";
     exit -1;
 }
 
-my ($ref_arff, $pred_arff, $lab_index) = @ARGV;
+my ($ref_arff, $pred_file, $lab_index) = @ARGV;
 
-#printf stdout "Processing $ref_arff and $pred_arff with index: $lab_index\n";
-parse_predictions_reg($ref_arff, $pred_arff, $pred_index, $lab_index);
-
+#printf stdout "Processing $ref_arff and $pred_file with index: $lab_index\n";
+parse_predictions_reg($ref_arff, $pred_file, $pred_index, $lab_index);
