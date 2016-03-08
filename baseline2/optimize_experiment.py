@@ -218,7 +218,7 @@ for n in range(len(script_bash)):
         f.write("Retraining initial model I=100 S=1 \n")
         f.close()
         os.system("./"+script_bash[n]+" 100 1 "+TRAIN[n]+" "+TEST[n]+" "+MODEL1[n])
-        file = open('eval/train_devel/'+RES[n]+'.RandomForest.I'+str(params[0])+'.S'+str(params[1])+'.result', 'r')
+        file = open('eval/train_devel/'+RES[n]+'.RandomForest.I100.S1.result', 'r')
         data = file.readlines();
         for x in data:
             line = x.split(" ");
