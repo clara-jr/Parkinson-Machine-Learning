@@ -11,3 +11,8 @@ RankLib/print.dep
 RankLib/nohup.out
 opensmile/openSMILE-2.2rc1
 opensmile/wavs
+opensmile/features
+opensmile/wavs_comp
+opensmile/features_comp
+opensmile/ComParE2015_Parkinson_meta.xlsx
+opensmile/IS13_ComParE.conf
