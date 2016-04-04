@@ -48,7 +48,7 @@ for n in range(len(script_bash)):
             values = []
             spearman = []
             string = []
-            parallel = "parallel -j " + str(experiments[cont]) + " ./"+script_bash[n]+" {1} {2}"
+            parallel = "parallel -j " + str(experiments[cont]) + " ./"+script_bash[n]+" {1} {2} "+TRAIN[n]
             for i in range(len(params)):
                 string.append(" ::: " + str(params[i]))
             string[cont] = " :::"
@@ -89,7 +89,7 @@ for n in range(len(script_bash)):
 
         f.write("Retraining final model C = " + str(params[0]) + " and L = " + str(params[1]) + "\n")
         f.close()
-        os.system('./'+script_bash[n]+' '+str(params[0])+' '+str(params[1]))
+        os.system('./'+script_bash[n]+' '+str(params[0])+' '+str(params[1])+' '+TRAIN[n])
         file = open('eval/train_devel/'+TRAIN[n]+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.result', 'r')
         data = file.readlines();
         for x in data:
@@ -104,7 +104,7 @@ for n in range(len(script_bash)):
 
         f.write("Retraining initial model C = 0.001 and L = 1.0" + "\n")
         f.close()
-        os.system('./'+script_bash[n]+' 0.001 1.0')
+        os.system('./'+script_bash[n]+' 0.001 1.0 '+TRAIN[n])
         file = open('eval/train_devel/'+TRAIN[n]+'.SVR.C0.001.L1.0.result', 'r')
         data = file.readlines();
         for x in data:
@@ -141,11 +141,7 @@ def frange2(start, stop, step=1.0):
 
 script_bash = ["baseline_randomforest_arff.sh", "baseline_randomforest_libsvm.sh"]
 
-TRAIN = ["../data/ComParE2015_Parkinson.train.arff", "../data/ComParE2015_Parkinson_mfc18_elasso_f20.train.libsvm"]
-MODEL1 = TRAIN
-TEST = ["../data/ComParE2015_Parkinson.devel.arff", "../data/ComParE2015_Parkinson_mfc18_elasso_f20.devel.libsvm"]
-
-RES = ["ComParE2015_Parkinson", "ComParE2015_Parkinson_mfc18_elasso_f20"]
+TRAIN = ["ComParE2015_Parkinson", "ComParE2015_Parkinson_mfc18_elasso_f20"]
 
 for n in range(len(script_bash)):
 
@@ -161,7 +157,7 @@ for n in range(len(script_bash)):
             values = []
             spearman = []
             string = []
-            parallel = "parallel -j " + str(experiments[cont]) + " ./"+script_bash[n]+" {1} {2} " + TRAIN[n] + " " + TEST[n] + " " + MODEL1[n]
+            parallel = "parallel -j " + str(experiments[cont]) + " ./"+script_bash[n]+" {1} {2} " + TRAIN[n]
             for i in range(len(params)):
                 string.append(" ::: " + str(params[i]))
             string[cont] = " :::"
@@ -176,8 +172,8 @@ for n in range(len(script_bash)):
             os.system(parallel)
             for exp in range(experiments[cont]):
                 params[cont] = values[exp]
-                if os.path.exists('eval/train_devel/'+RES[n]+'.RandomForest.I'+str(params[0])+'.S'+str(params[1])+'.result'):
-                    file = open('eval/train_devel/'+RES[n]+'.RandomForest.I'+str(params[0])+'.S'+str(params[1])+'.result', 'r')
+                if os.path.exists('eval/train_devel/'+TRAIN[n]+'.RandomForest.I'+str(params[0])+'.S'+str(params[1])+'.result'):
+                    file = open('eval/train_devel/'+TRAIN[n]+'.RandomForest.I'+str(params[0])+'.S'+str(params[1])+'.result', 'r')
                     data = file.readlines();
                     for x in data:
                         line = x.split(" ");
@@ -202,8 +198,8 @@ for n in range(len(script_bash)):
 
         f.write("Retraining final model I="+str(params[0])+" S="+str(params[1])+"\n")
         f.close()
-        os.system("./"+script_bash[n]+" "+str(params[0])+" "+str(params[1])+" "+TRAIN[n]+" "+TEST[n]+" "+MODEL1[n])
-        file = open('eval/train_devel/'+RES[n]+'.RandomForest.I'+str(params[0])+'.S'+str(params[1])+'.result', 'r')
+        os.system("./"+script_bash[n]+" "+str(params[0])+" "+str(params[1])+" "+TRAIN[n])
+        file = open('eval/train_devel/'+TRAIN[n]+'.RandomForest.I'+str(params[0])+'.S'+str(params[1])+'.result', 'r')
         data = file.readlines();
         for x in data:
             line = x.split(" ");
@@ -217,8 +213,8 @@ for n in range(len(script_bash)):
 
         f.write("Retraining initial model I=100 S=1 \n")
         f.close()
-        os.system("./"+script_bash[n]+" 100 1 "+TRAIN[n]+" "+TEST[n]+" "+MODEL1[n])
-        file = open('eval/train_devel/'+RES[n]+'.RandomForest.I100.S1.result', 'r')
+        os.system("./"+script_bash[n]+" 100 1 "+TRAIN[n])
+        file = open('eval/train_devel/'+TRAIN[n]+'.RandomForest.I100.S1.result', 'r')
         data = file.readlines();
         for x in data:
             line = x.split(" ");

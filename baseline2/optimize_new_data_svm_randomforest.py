@@ -127,7 +127,7 @@ for group in range(5):
     f.write("-------------------------------------------------------------------" + "\n" + "\n")
     f.close()
 
-    # ARFF and LIBSVM RandomForest
+    # RandomForest
 
     # Parameters:
     # I: numTrees -- The number of trees to be generated.

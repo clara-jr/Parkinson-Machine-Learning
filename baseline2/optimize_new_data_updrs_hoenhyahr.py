@@ -26,7 +26,7 @@ def frange(start, stop, step=1.0):
 
 # Greedy - Find optimal parameter C for L=1.0 static -> Find optimal parameter L for C=optimalC static
 
-if os.path.exists('baseline_train_devel_new_data.sh'):
+if os.path.exists('baseline_svm_arff.sh'):
 
     for park_class in range(len(parkinson_class)):
 
@@ -45,7 +45,7 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
                 values = []
                 spearman = []
                 string = []
-                parallel = "parallel -j " + str(experiments[cont]) + " ./baseline_train_devel_new_data.sh {1} {2} " + FEATURE
+                parallel = "parallel -j " + str(experiments[cont]) + " ./baseline_svm_arff.sh {1} {2} " + FEATURE
                 for i in range(len(params)):
                     string.append(" ::: " + str(params[i]))
                 string[cont] = " :::"
@@ -86,7 +86,7 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
 
             f.write("Retraining final model C = " + str(params[0]) + " and L = " + str(params[1]) + "\n")
             f.close()
-            os.system('./baseline_train_devel_new_data.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
+            os.system('./baseline_svm_arff.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
             file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.result', 'r')
             data = file.readlines();
             for x in data:
@@ -98,7 +98,7 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
 
             f.write("Retraining initial model C = 0.001 and L = 1.0" + "\n")
             f.close()
-            os.system('./baseline_train_devel_new_data.sh 0.001 1.0 '+FEATURE)
+            os.system('./baseline_svm_arff.sh 0.001 1.0 '+FEATURE)
             file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'.SVR.C0.001.L1.0.result', 'r')
             data = file.readlines();
             for x in data:
@@ -111,5 +111,5 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
 
 else:
     f = open("print_new_data.dep", "a")
-    f.write("The bash script baseline_train_devel_new_data.sh has not been created")
+    f.write("The bash script baseline_svm_arff.sh has not been created")
     f.close()
