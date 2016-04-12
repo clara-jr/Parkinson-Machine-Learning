@@ -23,7 +23,7 @@ def frange2(start, stop, step=1.0):
 
 for group in range(5):
 
-    TRAIN = "New_Data_"+str(group+1)+"_v2"
+    TRAIN = "Experiment_New_Data_"+str(group+1)+"_updrs"
     results = []
     number_results = []
     os.system("rm print_new_data_svm_randomforest_"+str(group+1)+".dep")

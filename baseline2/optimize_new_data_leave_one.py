@@ -26,7 +26,7 @@ def frange(start, stop, step=1.0):
 
 # Greedy - Find optimal parameter C for L=1.0 static -> Find optimal parameter L for C=optimalC static
 
-if os.path.exists('baseline_train_devel_new_data.sh'):
+if os.path.exists('baseline_svm_arff.sh'):
 
     for pacient in range(len(index_sort)):
 
@@ -43,7 +43,7 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
             values = []
             err_comparison = []
             string = []
-            parallel = "parallel -j " + str(experiments[cont]) + " ./baseline_train_devel_new_data.sh {1} {2} " + FEATURE
+            parallel = "parallel -j " + str(experiments[cont]) + " ./baseline_svm_arff.sh {1} {2} " + FEATURE
             for i in range(len(params)):
                 string.append(" ::: " + str(params[i]))
             string[cont] = " :::"
@@ -77,12 +77,12 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
                     error = 0
                     pred_medium = 0
                     for p in range(len(pred)):
-                        pred_medium += pred[p]/48
+                        pred_medium += pred[p]/len(pred)
                     error = abs(pred_medium-valor)/valor
                     err_comparison.append(float(error))
                     rmse = 0
                     for e in range(len(err)):
-                        rmse += err[e]*err[e]/48
+                        rmse += err[e]*err[e]/len(pred)
                     rmse = math.sqrt(rmse)
                     file.close()
                     f = open("print_new_data_"+str(index_sort[pacient])+"_leave_one.dep", "a")
@@ -107,7 +107,7 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
 
         f.write("Retraining final model C = " + str(params[0]) + " and L = " + str(params[1]) + "\n")
         f.close()
-        os.system('./baseline_train_devel_new_data.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
+        os.system('./baseline_svm_arff.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
         file = open('eval/train_devel/Experiment_New_Data_'+str(index_sort[pacient])+'_leave_one.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred', 'r')
         data = file.readlines();
         valor = 0
@@ -124,12 +124,15 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
         error = 0
         pred_medium = 0
         for p in range(len(pred)):
-            pred_medium += pred[p]/48
+            pred_medium += pred[p]/len(pred)
         error = abs(pred_medium-valor)/valor
         rmse = 0
         for e in range(len(err)):
-            rmse += err[e]*err[e]/48
+            rmse += err[e]*err[e]/len(pred)
+            err[e] = abs(err[e])
         rmse = math.sqrt(rmse)
+        index_min = err.index(min(err))
+        index_max = err.index(max(err))
         file.close()
         f = open("print_new_data_"+str(index_sort[pacient])+"_leave_one.dep", "a")
         f.write("UPDRS: " + str(valor) + "\n")
@@ -137,10 +140,12 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
         f.write("RMSE: " + str(rmse) + "\n")
         f.write("ABSOLUTE ERROR: " + str(abs(pred_medium-valor)) + "\n")
         f.write("RELATIVE ERROR final: " + str(error) + "\n")
+        f.write("Best result with audio: " + str(index_min+1) + " Relative error: " + str(err[index_min]/valor) + "\n")
+        f.write("Worst result with audio: " + str(index_max+1) + " Relative error: " + str(err[index_max]/valor) + "\n")
 
         f.write("Retraining initial model C = 0.001 and L = 1.0" + "\n")
         f.close()
-        os.system('./baseline_train_devel_new_data.sh 0.001 1.0 '+FEATURE)
+        os.system('./baseline_svm_arff.sh 0.001 1.0 '+FEATURE)
         file = open('eval/train_devel/Experiment_New_Data_'+str(index_sort[pacient])+'_leave_one.SVR.C0.001.L1.0.pred', 'r')
         data = file.readlines();
         valor = 0
@@ -157,11 +162,11 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
         error = 0
         pred_medium = 0
         for p in range(len(pred)):
-            pred_medium += pred[p]/48
+            pred_medium += pred[p]/len(pred)
         error = abs(pred_medium-valor)/valor
         rmse = 0
         for e in range(len(err)):
-            rmse += err[e]*err[e]/48
+            rmse += err[e]*err[e]/len(pred)
         rmse = math.sqrt(rmse)
         file.close()
         f = open("print_new_data_"+str(index_sort[pacient])+"_leave_one.dep", "a")
@@ -174,5 +179,5 @@ if os.path.exists('baseline_train_devel_new_data.sh'):
 
 else:
     f = open("print_new_data.dep", "a")
-    f.write("The bash script baseline_train_devel_new_data.sh has not been created")
+    f.write("The bash script baseline_svm_arff.sh has not been created")
     f.close()

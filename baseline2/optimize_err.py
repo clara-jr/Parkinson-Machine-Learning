@@ -70,8 +70,8 @@ if os.path.exists('baseline_train_devel.sh'):
                 error = 0
                 rmse = 0
                 for e in range(len(err)):
-                    error += abs(err[e])/(valor[e]*630)
-                    rmse += err[e]*err[e]/630
+                    error += abs(err[e])/(valor[e]*len(err))
+                    rmse += err[e]*err[e]/len(err)
                 err_comparison.append(float(error))
                 rmse = math.sqrt(rmse)
                 file.close()
@@ -111,8 +111,8 @@ if os.path.exists('baseline_train_devel.sh'):
     error = 0
     rmse = 0
     for e in range(len(err)):
-        error += abs(err[e])/(valor[e]*630)
-        rmse += err[e]*err[e]/630
+        error += abs(err[e])/(valor[e]*len(err))
+        rmse += err[e]*err[e]/len(err)
     rmse = math.sqrt(rmse)
     file.close()
     f = open("print_err_rel.dep", "a")
@@ -138,8 +138,8 @@ if os.path.exists('baseline_train_devel.sh'):
     error = 0
     rmse = 0
     for e in range(len(err)):
-        error += abs(err[e])/(valor[e]*630)
-        rmse += err[e]*err[e]/630
+        error += abs(err[e])/(valor[e]*len(err))
+        rmse += err[e]*err[e]/len(err)
     rmse = math.sqrt(rmse)
     file.close()
     f = open("print_err_rel.dep", "a")

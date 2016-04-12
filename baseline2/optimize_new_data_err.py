@@ -17,7 +17,7 @@ def frange(start, stop, step=1.0):
 
 for group in range(5):
 
-    TRAIN = "New_Data_"+str(group+1)+"_v2"
+    TRAIN = "Experiment_New_Data_"+str(group+1)+"_updrs"
     os.system("rm print_new_data_"+str(group+1)+".dep")
 
     # SVM
@@ -75,8 +75,8 @@ for group in range(5):
                     error = 0
                     rmse = 0
                     for e in range(len(err)):
-                        error += abs(err[e])/(valor[e]*192)
-                        rmse += err[e]*err[e]/192
+                        error += abs(err[e])/(valor[e]*len(err))
+                        rmse += err[e]*err[e]/len(err)
                     err_comparison.append(float(error))
                     rmse = math.sqrt(rmse)
                     file.close()
@@ -116,8 +116,8 @@ for group in range(5):
         error = 0
         rmse = 0
         for e in range(len(err)):
-            error += abs(err[e])/(valor[e]*192)
-            rmse += err[e]*err[e]/192
+            error += abs(err[e])/(valor[e]*len(err))
+            rmse += err[e]*err[e]/len(err)
         rmse = math.sqrt(rmse)
         file.close()
         f = open("print_new_data_"+str(group+1)+".dep", "a")
@@ -143,8 +143,8 @@ for group in range(5):
         error = 0
         rmse = 0
         for e in range(len(err)):
-            error += abs(err[e])/(valor[e]*192)
-            rmse += err[e]*err[e]/192
+            error += abs(err[e])/(valor[e]*len(err))
+            rmse += err[e]*err[e]/len(err)
         rmse = math.sqrt(rmse)
         file.close()
         f = open("print_new_data_"+str(group+1)+".dep", "a")
