@@ -15,7 +15,8 @@ eval_dir=./eval/train_devel
 mkdir -p $eval_dir
 
 # feature file basename
-feat_name=ComParE2015_Parkinson_mfc18_elasso_f20
+feat_name=$3
+test -z "$feat_name" && feat_name=ComParE2015_Parkinson_mfc18_elasso_f20
 
 # path to Weka's jar file
 #weka_jar=../../../weka-3-7-11/weka.jar

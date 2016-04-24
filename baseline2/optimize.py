@@ -2,6 +2,7 @@
 # -*- coding: iso-8859-1 -*-
 
 import os
+import math
 
 # Parameters:
 # C: c -- The complexity parameter C.(default 1.0).
@@ -82,27 +83,72 @@ if os.path.exists('baseline_svm_arff.sh'):
     f.write("Retraining final model C = " + str(params[0]) + " and L = " + str(params[1]) + "\n")
     f.close()
     os.system('./baseline_svm_arff.sh '+str(params[0])+' '+str(params[1]))
+    file = open('eval/train_devel/'+FEATURE+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred', 'r')
+    data = file.readlines();
+    err = []
+    valor = []
+    for x in data:
+        line = x.split(" ");
+        line_rel = []
+        for l in range(len(line)):
+            if line[l] != '':
+                line_rel.append(line[l])
+        if len(line_rel) == 5:
+            valor.append(float(line_rel[1]))
+            err.append(float(line_rel[3]))
+    error = 0
+    rmse = 0
+    for e in range(len(err)):
+        error += abs(err[e])/(valor[e]*len(err))
+        rmse += err[e]*err[e]/len(err)
+    rmse = math.sqrt(rmse)
+    file.close()
     file = open('eval/train_devel/'+FEATURE+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.result', 'r')
     data = file.readlines();
     for x in data:
         line = x.split(" ");
     s = line[len(line)-1]
+    spearman.append(float(s))
     file.close()
     f = open("print.dep", "a")
     f.write("Spearman correlation coefficient final: " + s + "\n")
+    f.write("RMSE: " + str(rmse) + "\n")
+    f.write("RELATIVE ERROR: " + str(error) + "\n")
 
     f.write("Retraining initial model C = 0.001 and L = 1.0" + "\n")
     f.close()
     os.system('./baseline_svm_arff.sh 0.001 1.0')
+    file = open('eval/train_devel/'+FEATURE+'.SVR.C0.001.L1.0.pred', 'r')
+    data = file.readlines();
+    err = []
+    valor = []
+    for x in data:
+        line = x.split(" ");
+        line_rel = []
+        for l in range(len(line)):
+            if line[l] != '':
+                line_rel.append(line[l])
+        if len(line_rel) == 5:
+            valor.append(float(line_rel[1]))
+            err.append(float(line_rel[3]))
+    error = 0
+    rmse = 0
+    for e in range(len(err)):
+        error += abs(err[e])/(valor[e]*len(err))
+        rmse += err[e]*err[e]/len(err)
+    rmse = math.sqrt(rmse)
+    file.close()
     file = open('eval/train_devel/'+FEATURE+'.SVR.C0.001.L1.0.result', 'r')
     data = file.readlines();
     for x in data:
         line = x.split(" ");
     s = line[len(line)-1]
+    spearman.append(float(s))
     file.close()
     f = open("print.dep", "a")
     f.write("Spearman correlation coefficient initial: " + s + "\n")
-    f.close()
+    f.write("RMSE: " + str(rmse) + "\n")
+    f.write("RELATIVE ERROR: " + str(error) + "\n")
 
 else:
     f = open("print.dep", "a")

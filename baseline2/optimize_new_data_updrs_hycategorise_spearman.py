@@ -7,9 +7,12 @@ from scipy import stats
 import math
 
 parkinson_class = ["updrs", "hoenhyahr_categorise"]
-parkinson_experiments = ["1", "2", "3", "4", "5"]
+parkinson_experiments = ["all", "1", "2", "3", "4", "5"]
 n_locutores = 25
-n_grupos = 5
+n_grupos = [1, 5, 5, 5, 5, 5]
+# version = "v1"
+# version = "v2"
+version = "homoupdrs"
 
 # Parameters:
 # C: c -- The complexity parameter C.(default 1.0).
@@ -43,8 +46,8 @@ if os.path.exists('baseline_svm_arff.sh'):
             step = [9.0E-5, 0.1]
             experiments = [14, 10] # C = 0.00001 0.0001 0.001 0.01 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0; L = 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
 
-            os.system("rm print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_homoupdrs.dep")
-            FEATURE = "Experiment_New_Data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_homoupdrs"
+            os.system("rm print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep")
+            FEATURE = "Experiment_New_Data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+""
 
             for cont in range(len(params)):
                 values = []
@@ -59,14 +62,14 @@ if os.path.exists('baseline_svm_arff.sh'):
                     string[cont] += " " + str(param)
                 for i in range(len(params)):
                     parallel += string[i]
-                f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_homoupdrs.dep", "a")
+                f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
                 f.write("Training " + parallel + "\n")
                 f.close()
                 os.system(parallel)
                 for exp in range(experiments[cont]):
                     params[cont] = values[exp]
-                    if os.path.exists('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_homoupdrs.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred'):
-                        file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_homoupdrs.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred', 'r')
+                    if os.path.exists('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_'+version+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred'):
+                        file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_'+version+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred', 'r')
                         data = file.readlines();
                         valor = []
                         pred = []
@@ -81,13 +84,13 @@ if os.path.exists('baseline_svm_arff.sh'):
                                 pred.append(float(line_rel[2]))
                         pred_locutor = []
                         valor_locutor = []
-                        for ini in range(n_locutores/n_grupos):
+                        for ini in range(n_locutores/n_grupos[n]):
                             pred_locutor.append(0)
                             valor_locutor.append(0)
-                        for locutor in range(n_locutores/n_grupos):
-                            valor_locutor[locutor] = valor[(len(pred)/(n_locutores/n_grupos))*locutor]
-                            for p in range(len(pred)/(n_locutores/n_grupos)):
-                                pred_locutor[locutor] += pred[p+(len(pred)/(n_locutores/n_grupos))*locutor]/(len(pred)/(n_locutores/n_grupos))
+                        for locutor in range(n_locutores/n_grupos[n]):
+                            valor_locutor[locutor] = valor[(len(pred)/(n_locutores/n_grupos[n]))*locutor]
+                            for p in range(len(pred)/(n_locutores/n_grupos[n])):
+                                pred_locutor[locutor] += pred[p+(len(pred)/(n_locutores/n_grupos[n]))*locutor]/(len(pred)/(n_locutores/n_grupos[n]))
                             if parkinson_class[park_class] == "hoenhyahr_categorise":
                                 if round(pred_locutor[locutor]) > 7.0:
                                     pred_locutor[locutor] = 7.0
@@ -100,7 +103,7 @@ if os.path.exists('baseline_svm_arff.sh'):
                             s = [0]
                         spearman_comparison.append(float(s[0]))
                         file.close()
-                        f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_homoupdrs.dep", "a")
+                        f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
                         f.write("Results for model C="+str(params[0])+" L="+str(params[1]) + "\n")
                         f.write("REAL: " + str(valor_locutor) + "\n")
                         f.write("PREDICTION: " + str(pred_locutor) + "\n")
@@ -108,20 +111,20 @@ if os.path.exists('baseline_svm_arff.sh'):
                         f.close()
                     else:
                         spearman_comparison.append(-1)
-                        f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_homoupdrs.dep", "a")
+                        f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
                         f.write("The result file for C="+str(params[0])+" and L="+str(params[1])+" has not been created" + "\n")
                         f.close()
                 index = spearman_comparison.index(max(spearman_comparison))
                 params[cont] = values[index]
 
-            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_homoupdrs.dep", "a")
+            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
             f.write("Optimal C = " + str(params[0]) + "\n")
             f.write("Optimal L = " + str(params[1]) + "\n")
 
             f.write("Retraining final model C = " + str(params[0]) + " and L = " + str(params[1]) + "\n")
             f.close()
             os.system('./baseline_svm_arff.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
-            file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_homoupdrs.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred', 'r')
+            file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_'+version+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred', 'r')
             data = file.readlines();
             valor = []
             pred = []
@@ -141,15 +144,15 @@ if os.path.exists('baseline_svm_arff.sh'):
             err_locutor_abs = []
             err_locutor_rel = []
             rmse_locutor = []
-            for ini in range(n_locutores/n_grupos):
+            for ini in range(n_locutores/n_grupos[n]):
                 pred_locutor.append(0)
                 valor_locutor.append(0)
                 rmse_locutor.append(0)
-            for locutor in range((n_locutores/n_grupos)):
-                valor_locutor[locutor] = valor[(len(pred)/(n_locutores/n_grupos))*locutor]
-                for p in range(len(pred)/(n_locutores/n_grupos)):
-                    pred_locutor[locutor] += pred[p+(len(pred)/(n_locutores/n_grupos))*locutor]/(len(pred)/(n_locutores/n_grupos))
-                    rmse_locutor[locutor] += err[p+(len(pred)/(n_locutores/n_grupos))*locutor]*err[p+(len(pred)/(n_locutores/n_grupos))*locutor]/(len(pred)/(n_locutores/n_grupos))
+            for locutor in range((n_locutores/n_grupos[n])):
+                valor_locutor[locutor] = valor[(len(pred)/(n_locutores/n_grupos[n]))*locutor]
+                for p in range(len(pred)/(n_locutores/n_grupos[n])):
+                    pred_locutor[locutor] += pred[p+(len(pred)/(n_locutores/n_grupos[n]))*locutor]/(len(pred)/(n_locutores/n_grupos[n]))
+                    rmse_locutor[locutor] += err[p+(len(pred)/(n_locutores/n_grupos[n]))*locutor]*err[p+(len(pred)/(n_locutores/n_grupos[n]))*locutor]/(len(pred)/(n_locutores/n_grupos[n]))
                 if parkinson_class[park_class] == "hoenhyahr_categorise":
                     if round(pred_locutor[locutor]) > 7.0:
                         pred_locutor[locutor] = 7.0
@@ -163,15 +166,15 @@ if os.path.exists('baseline_svm_arff.sh'):
             err_abs = 0
             err_rel = 0
             rmse = 0
-            for locutor in range(n_locutores/n_grupos):
-                err_abs += err_locutor_abs[locutor]/(n_locutores/n_grupos)
-                err_rel += err_locutor_rel[locutor]/(n_locutores/n_grupos)
-                rmse += rmse_locutor[locutor]/(n_locutores/n_grupos)
+            for locutor in range(n_locutores/n_grupos[n]):
+                err_abs += err_locutor_abs[locutor]/(n_locutores/n_grupos[n])
+                err_rel += err_locutor_rel[locutor]/(n_locutores/n_grupos[n])
+                rmse += rmse_locutor[locutor]/(n_locutores/n_grupos[n])
             s = scipy.stats.spearmanr(valor_locutor, pred_locutor)
             if math.isnan(float(s[0])):
                 s = [0]
             file.close()
-            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_homoupdrs.dep", "a")
+            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
             f.write("Spearman correlation coefficient final: " + str(s[0]) + "\n")
             f.write("REAL: " + str(valor_locutor) + "\n")
             f.write("PREDICTION: " + str(pred_locutor) + "\n")
@@ -182,7 +185,7 @@ if os.path.exists('baseline_svm_arff.sh'):
             f.write("Retraining initial model C = 0.001 and L = 1.0" + "\n")
             f.close()
             os.system('./baseline_svm_arff.sh 0.001 1.0 '+FEATURE)
-            file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_homoupdrs.SVR.C0.001.L1.0.pred', 'r')
+            file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_'+version+'.SVR.C0.001.L1.0.pred', 'r')
             data = file.readlines();
             valor = []
             pred = []
@@ -202,15 +205,15 @@ if os.path.exists('baseline_svm_arff.sh'):
             err_locutor_abs = []
             err_locutor_rel = []
             rmse_locutor = []
-            for ini in range(n_locutores/n_grupos):
+            for ini in range(n_locutores/n_grupos[n]):
                 pred_locutor.append(0)
                 valor_locutor.append(0)
                 rmse_locutor.append(0)
-            for locutor in range(n_locutores/n_grupos):
-                valor_locutor[locutor] = valor[(len(pred)/(n_locutores/n_grupos))*locutor]
-                for p in range(len(pred)/(n_locutores/n_grupos)):
-                    pred_locutor[locutor] += pred[p+(len(pred)/(n_locutores/n_grupos))*locutor]/(len(pred)/(n_locutores/n_grupos))
-                    rmse_locutor[locutor] += err[p+(len(pred)/(n_locutores/n_grupos))*locutor]*err[p+(len(pred)/(n_locutores/n_grupos))*locutor]/(len(pred)/(n_locutores/n_grupos))
+            for locutor in range(n_locutores/n_grupos[n]):
+                valor_locutor[locutor] = valor[(len(pred)/(n_locutores/n_grupos[n]))*locutor]
+                for p in range(len(pred)/(n_locutores/n_grupos[n])):
+                    pred_locutor[locutor] += pred[p+(len(pred)/(n_locutores/n_grupos[n]))*locutor]/(len(pred)/(n_locutores/n_grupos[n]))
+                    rmse_locutor[locutor] += err[p+(len(pred)/(n_locutores/n_grupos[n]))*locutor]*err[p+(len(pred)/(n_locutores/n_grupos[n]))*locutor]/(len(pred)/(n_locutores/n_grupos[n]))
                 if parkinson_class[park_class] == "hoenhyahr_categorise":
                     if round(pred_locutor[locutor]) > 7.0:
                         pred_locutor[locutor] = 7.0
@@ -224,15 +227,15 @@ if os.path.exists('baseline_svm_arff.sh'):
             err_abs = 0
             err_rel = 0
             rmse = 0
-            for locutor in range(n_locutores/n_grupos):
-                err_abs += err_locutor_abs[locutor]/(n_locutores/n_grupos)
-                err_rel += err_locutor_rel[locutor]/(n_locutores/n_grupos)
-                rmse += rmse_locutor[locutor]/(n_locutores/n_grupos)
+            for locutor in range(n_locutores/n_grupos[n]):
+                err_abs += err_locutor_abs[locutor]/(n_locutores/n_grupos[n])
+                err_rel += err_locutor_rel[locutor]/(n_locutores/n_grupos[n])
+                rmse += rmse_locutor[locutor]/(n_locutores/n_grupos[n])
             s = scipy.stats.spearmanr(valor_locutor, pred_locutor)
             if math.isnan(float(s[0])):
                 s = [0]
             file.close()
-            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_homoupdrs.dep", "a")
+            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
             f.write("Spearman correlation coefficient initial: " + str(s[0]) + "\n")
             f.write("REAL: " + str(valor_locutor) + "\n")
             f.write("PREDICTION: " + str(pred_locutor) + "\n")
