@@ -1,0 +1,61 @@
+#!/usr/bin/python
+# -*- coding: iso-8859-1 -*-
+
+import os
+
+updrs = [25, 69, 0, 49, 66, 42, 27, 18, 38, 52, 56, 57, 74, 71, 50, 55, 87, 24, 23, 54, 59, 21, 22, 19, 6, 48]
+index_sort = [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+n_audios = 48
+
+if os.path.exists('extract.sh'):
+
+    # LEAVE-1/2
+
+    for pacient_devel in range(len(index_sort)):
+        pacient_train_inic = 0
+        train = open("features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_leave_half.train.arff", "a")
+        devel = open("features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_leave_half.devel.arff", "a") # audios impares 1-47
+        test = open("features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_leave_half.test.arff", "a") # audios pares 2-48
+        os.system("cp features/palabras_1_" + str(index_sort[pacient_devel]) + "_updrs.arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_leave_half.devel.arff")
+        os.system("cp features/palabras_2_" + str(index_sort[pacient_devel]) + "_updrs.arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_leave_half.test.arff")
+        for audio in range(n_audios):
+            if audio != 0 and audio != 1:
+				if audio%2==0:
+					file_devel = open("features/palabras_" + str(audio+1) + "_" + str(index_sort[pacient_devel]) + "_updrs.arff", 'r')
+					devel.write(file_devel.readlines()[-1])
+					file_devel.close()
+				else:
+					file_test = open("features/palabras_" + str(audio+1) + "_" + str(index_sort[pacient_devel]) + "_updrs.arff", 'r')
+					test.write(file_test.readlines()[-1])
+					file_test.close()
+        devel.close()
+        test.close()
+        if pacient_devel != 0:
+            os.system("cp features/palabras_1_0_updrs.arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_leave_half.train.arff")
+        else:
+            pacient_train_inic = 1
+            os.system("cp features/palabras_1_1_updrs.arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_leave_half.train.arff")
+        for pacient_train in range(len(index_sort)):
+            if pacient_train != pacient_devel:
+                if pacient_train != pacient_train_inic:
+                    for audio in range(n_audios):
+                        file_train = open("features/palabras_" + str(audio+1) + "_" + str(index_sort[pacient_train]) + "_updrs.arff", 'r')
+                        train.write(file_train.readlines()[-1])
+                        file_train.close()
+                else:
+                    for audio in range(n_audios):
+                        if audio != 0:
+                            file_train = open("features/palabras_" + str(audio+1) + "_" + str(index_sort[pacient_train]) + "_updrs.arff", 'r')
+                            train.write(file_train.readlines()[-1])
+                            file_train.close()
+        train.close()
+
+    for pacient in range(len(index_sort)):
+        os.system("cp features/Experiment_New_Data_"+str(index_sort[pacient])+"_leave_half.train.arff ../data/")
+        os.system("cp features/Experiment_New_Data_"+str(index_sort[pacient])+"_leave_half.devel.arff ../data/")
+        os.system("cp features/Experiment_New_Data_"+str(index_sort[pacient])+"_leave_half.test.arff ../data/")
+
+else:
+    f = open("print.dep", "a")
+    f.write("The bash script extract.sh has not been created")
+    f.close()

@@ -63,17 +63,17 @@ sub rank
 sub cor {
     my $pred = shift;
     my $ref = shift;
-  
+
     my $i;
     my $N = $#{$pred} + 1;
     if ($#{$ref} + 1 != $N) {
         print "Incompatible dimension: $N vs. ", $#{$ref} + 1, "\n";
         return 0;
     }
-    if ($N == 0) { 
-        return 0; 
+    if ($N == 0) {
+        return 0;
     }
-    my $cc = 0; my $mP = 0; my $mR = 0; 
+    my $cc = 0; my $mP = 0; my $mR = 0;
     for ($i = 0; $i < $N; ++$i) {
          $mP += $pred->[$i];
          $mR += $ref->[$i];
@@ -85,11 +85,11 @@ sub cor {
         $sP += ($pred->[$i] - $mP) * ($pred->[$i] - $mP);
         $sR += ($ref->[$i] - $mR) * ($ref->[$i] - $mR);
     }
-    $sR /= $N; 
+    $sR /= $N;
     $sR = sqrt($sR);
-    $sP /= $N; 
+    $sP /= $N;
     $sP = sqrt($sP);
-    if ($sP * $sR == 0) { 
+    if ($sP * $sR == 0) {
         $cc = 0.0;
     }
     else {

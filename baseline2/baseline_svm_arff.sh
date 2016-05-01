@@ -79,7 +79,7 @@ fi
 
 tail -2 $result_file
 echo "Finish" >> pruebas.dep
-exit 0
+# exit 0
 
 # test predictions
 pred_test_file=$eval_dir/$feat_name.SVR.C$C.L$L.test.pred
