@@ -25,7 +25,7 @@ if os.path.exists('extract.sh'):
             f.write("Converting audio " + str(a+1) + " of pacient " + str(p) + "\n")
             f.close()
             for i in range(len(parkinson_class)):
-                if !os.path.exists("features/palabras_" + str(a+1) + "_" + str(p) + ".arff"):
+                if  not os.path.exists("features/palabras_" + str(a+1) + "_" + str(p) + ".arff"):
                     # ./extract.sh wav_file feat_file class
                     if i == 0:
                         os.system("./extract.sh palabras_" + str(a+1) + "_" + str(p) + ".ch1.wav palabras_" + str(a+1) + "_" + str(p) + "_"+parkinson_class[i]+".arff "+ str(updrs[p]))

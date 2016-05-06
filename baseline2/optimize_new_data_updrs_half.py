@@ -10,7 +10,7 @@ parkinson_class = ["updrs"]
 parkinson_experiments = ["1", "2", "3", "4", "5"]
 n_locutores = 25
 n_grupos = [5, 5, 5, 5, 5]
-version = "homoupdrs"
+version = "homoupdrs_half_vowels" # _attributes
 
 # Parameters:
 # C: c -- The complexity parameter C.(default 1.0).
@@ -44,8 +44,8 @@ if os.path.exists('baseline_svm_arff.sh'):
             step = [9.0E-5, 0.1]
             experiments = [14, 10] # C = 0.00001 0.0001 0.001 0.01 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0; L = 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
 
-            os.system("rm print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+"_half.dep")
-            FEATURE = "Experiment_New_Data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+"_half"
+            os.system("rm print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep")
+            FEATURE = "Experiment_New_Data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version
 
             for cont in range(len(params)):
                 values = []
@@ -60,7 +60,7 @@ if os.path.exists('baseline_svm_arff.sh'):
                     string[cont] += " " + str(param)
                 for i in range(len(params)):
                     parallel += string[i]
-                f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+"_half.dep", "a")
+                f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
                 f.write("Training " + parallel + "\n")
                 f.close()
                 os.system(parallel)
@@ -94,7 +94,7 @@ if os.path.exists('baseline_svm_arff.sh'):
                             s = [0]
                         spearman_comparison.append(float(s[0]))
                         file.close()
-                        f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+"_half.dep", "a")
+                        f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
                         f.write("Results for model C="+str(params[0])+" L="+str(params[1]) + "\n")
                         f.write("REAL: " + str(valor_locutor) + "\n")
                         f.write("PREDICTION: " + str(pred_locutor) + "\n")
@@ -102,20 +102,20 @@ if os.path.exists('baseline_svm_arff.sh'):
                         f.close()
                     else:
                         spearman_comparison.append(-1)
-                        f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+"_half.dep", "a")
+                        f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
                         f.write("The result file for C="+str(params[0])+" and L="+str(params[1])+" has not been created" + "\n")
                         f.close()
                 index = spearman_comparison.index(max(spearman_comparison))
                 params[cont] = values[index]
 
-            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+"_half.dep", "a")
+            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
             f.write("Optimal C = " + str(params[0]) + "\n")
             f.write("Optimal L = " + str(params[1]) + "\n")
 
             f.write("Retraining final model with test set C = " + str(params[0]) + " and L = " + str(params[1]) + "\n")
             f.close()
             os.system('./baseline_svm_arff.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
-            file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_'+version+'_half.SVR.C'+str(params[0])+'.L'+str(params[1])+'.test.pred', 'r')
+            file = open('eval/train_devel/Experiment_New_Data_'+parkinson_experiments[n]+"_"+parkinson_class[park_class]+'_'+version+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.test.pred', 'r')
             data = file.readlines();
             valor = []
             pred = []
@@ -158,7 +158,7 @@ if os.path.exists('baseline_svm_arff.sh'):
             if math.isnan(float(s[0])):
                 s = [0]
             file.close()
-            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+"_half.dep", "a")
+            f = open("print_new_data_"+parkinson_experiments[n]+"_"+parkinson_class[park_class]+"_"+version+".dep", "a")
             f.write("Spearman correlation coefficient final: " + str(s[0]) + "\n")
             f.write("REAL: " + str(valor_locutor) + "\n")
             f.write("PREDICTION: " + str(pred_locutor) + "\n")

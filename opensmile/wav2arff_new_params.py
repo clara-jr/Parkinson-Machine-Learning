@@ -12,63 +12,92 @@ hy = [2, 2, 0, 2.5, 2.5, 2, 2, 2, 2, 2.5, 2, 3, 4, 2, 2, 2, 5, 2, 1, 3, 4, 2, 2,
 hy_categ = [3, 3, 0, 4, 4, 3, 3, 3, 3, 4, 3, 5, 6, 3, 3, 3, 7, 3, 1, 5, 6, 3, 3, 3, 3, 3]
 
 # define the function blocks
-def edad_func():
+def edad():
     return edad
-def dif_edad_func():
+def dif_edad():
     return dif_edad
-def sexo_func():
+def sexo():
     return sexo
-def hy_func():
+def hy():
     return hy
-def hy_categ_func():
+def hy_categ():
     return hy_categ
 
 # map the inputs to the function blocks
-options = {"edad" : edad_func,
-           "dif_edad" : dif_edad_func,
-           "sexo" : sexo_func,
-           "hy" : hy_func,
-           "hy_categ" : hy_categ_func
+options = {"edad" : edad,
+           "dif_edad" : dif_edad,
+           "sexo" : sexo,
+           "hy" : hy,
+           "hy_categ" : hy_categ
 }
 
 if os.path.exists('extract.sh'):
-
     os.system("rm print.dep")
-    for p in range(len(updrs)):
-        for a in range(49):
-            if !os.path.exists("features/palabras_" + str(a+1) + "_" + str(p) + ".arff"):
-                f = open("print.dep", "a")
-                f.write("Converting audio " + str(a+1) + " of pacient " + str(p) + "\n")
-                f.close()
-                # ./extract.sh wav_file feat_file class
-                os.system("./extract.sh palabras_" + str(a+1) + "_" + str(p) + ".ch1.wav palabras_" + str(a+1) + "_" + str(p) + ".arff "+ str(updrs[p]))
-            if len(sys.argv) == 2: # wav2arff_new_params param
-            	param = sys.argv[1]
-                try:
-                    params = options[param]()
-                    type_param = "numeric"
-                    if param == "sexo":
-                        type_param = "string"
-                    os.system("cp features/palabras_" + str(a+1) + "_" + str(p) + ".arff features/palabras_" + str(a+1) + "_" + str(p) + "_" + param + "_prueba.arff")
-                    arff_read = open("features/palabras_" + str(a+1) + "_" + str(p) + ".arff",'r')
+    if len(sys.argv) == 2: # wav2arff_new_params param
+        param = sys.argv[1]
+        if param == "vowels":
+            type_param = "{1,0}"
+            for p in range(len(updrs)):
+                for a in range(15):
+                    if not os.path.exists("features/palabras_" + str(a+1) + "_" + str(p) + ".arff"):
+                        f = open("print.dep", "a")
+                        f.write("Converting audio " + str(a+1) + " of pacient " + str(p) + "\n")
+                        f.close()
+                        # ./extract.sh wav_file feat_file class
+                        os.system("./extract.sh palabras_" + str(a+1) + "_" + str(p) + ".ch1.wav palabras_" + str(a+1) + "_" + str(p) + ".arff "+ str(updrs[p]))
+                    os.system("cp features/palabras_" + str(a+1) + "_" + str(p) + ".arff features/palabras_" + str(a+1) + "_" + str(p) + "_" + param + ".arff")
+                    arff_read = open("features/palabras_" + str(a+1) + "_" + str(p) + ".arff", 'r')
                     filedata = arff_read.read()
                     arff_read.close()
-                    newdata = filedata.replace("@attribute name string\n","@attribute name string\n@attribute " + param + " " + type_param + "\n")
-                    if type_param == "string":
-                        newdata = newdata.replace("'unknown',","'unknown','"+str(params[p])+"',")
+                    newdata = filedata.replace("@attribute name string\n","@attribute name string\n@attribute a " + type_param + "\n@attribute e " + type_param + "\n@attribute i " + type_param + "\n@attribute o " + type_param + "\n@attribute u " + type_param + "\n")
+                    if a == 0 or a == 5 or a == 10:
+                        cod = "1,0,0,0,0,"
+                    elif a == 1 or a == 6 or a == 11:
+                        cod = "0,1,0,0,0,"
+                    elif a == 2 or a == 7 or a == 12:
+                        cod = "0,0,1,0,0,"
+                    elif a == 3 or a == 8 or a == 13:
+                        cod = "0,0,0,1,0,"
                     else:
-                        newdata = newdata.replace("'unknown',","'unknown',"+str(params[p])+",")
+                        cod = "0,0,0,0,1,"
+                    newdata = newdata.replace("'unknown',","'unknown',"+cod)
                     arff_write = open("features/palabras_" + str(a+1) + "_" + str(p) + "_" + param + ".arff",'w')
                     arff_write.write(newdata)
                     arff_write.close()
-                except:
-                    f = open("print.dep", "a")
-                    f.write("Default case param is different to the values defined")
-                    f.close()
-            else:
-                f = open("print.dep", "a")
-                f.write("")
-                f.close()
+        else:
+            for p in range(len(updrs)):
+                for a in range(49):
+                    if not os.path.exists("features/palabras_" + str(a+1) + "_" + str(p) + ".arff"):
+                        f = open("print.dep", "a")
+                        f.write("Converting audio " + str(a+1) + " of pacient " + str(p) + "\n")
+                        f.close()
+                        # ./extract.sh wav_file feat_file class
+                        os.system("./extract.sh palabras_" + str(a+1) + "_" + str(p) + ".ch1.wav palabras_" + str(a+1) + "_" + str(p) + ".arff "+ str(updrs[p]))
+                    try:
+                        params = options[param]()
+                        type_param = "numeric"
+                        if param == "sexo":
+                            type_param = "{H,M}"
+                        arff_read = open("features/palabras_" + str(a+1) + "_" + str(p) + ".arff", 'r')
+                        filedata = arff_read.read()
+                        arff_read.close()
+                        newdata = filedata.replace("@attribute name string\n","@attribute name string\n@attribute " + param + " " + type_param + "\n")
+                        if type_param == "string":
+                            newdata = newdata.replace("'unknown',","'unknown','"+str(params[p])+"',")
+                        else:
+                            newdata = newdata.replace("'unknown',","'unknown',"+str(params[p])+",")
+                        arff_write = open("features/palabras_" + str(a+1) + "_" + str(p) + "_" + param + ".arff",'w')
+                        arff_write.write(newdata)
+                        arff_write.close()
+                    except:
+                        f = open("print.dep", "a")
+                        f.write("Default case param is different to the values defined")
+                        f.close()
+    else:
+        f = open("print.dep", "a")
+        f.write("")
+        f.close()
+
 else:
     f = open("print.dep", "a")
     f.write("The bash script extract.sh has not been created")
