@@ -6,76 +6,28 @@ import scipy
 from scipy import stats
 import math
 
-os.system("rm print_new_data_spearman_medium.dep")
-pred_file = ["SVR_half", "LinearRegression", "SimpleLinearRegression", "ZeroR", "SVR", "SVR_elasso", "RandomForest", "RandomForest_elasso"]
-algorithms = ["SVR", "LinearRegression", "SimpleLinearRegression", "ZeroR", "SVR", "SVR", "RandomForest", "RandomForest"]
+os.system("rm print_new_data_spearman_medium_vowels.dep")
+pred_file = ["SVR_half_vowels", "SVR_half_vowels_attributes"]
+algorithms = ["SVR", "SVR"]
 n_locutores = 25
 n_grupos = 5
 
 for n in range(len(algorithms)):
     for group in range(n_grupos):
         if n == 0:
-            FEATURE = "Experiment_New_Data_"+str(group+1)+"_updrs_homoupdrs_half"
-            if group == 0:
-                algorithms[n] = "SVR.C1e-05.L0.1.test"
-            elif group == 1:
-                algorithms[n] = "SVR.C0.001.L0.1.test"
-            elif group == 2:
-                algorithms[n] = "SVR.C0.0001.L0.6.test"
-            elif group == 3:
-                algorithms[n] = "SVR.C1e-05.L0.5.test"
-            else:
-                algorithms[n] = "SVR.C1e-05.L0.7.test"
-        elif n == 4:
-            FEATURE = "Experiment_New_Data_"+str(group+1)+"_updrs_homoupdrs"
-            if group == 0:
-                algorithms[n] = "SVR.C1e-05.L0.1"
-            elif group == 1:
-                algorithms[n] = "SVR.C0.001.L0.1"
-            elif group == 2:
-                algorithms[n] = "SVR.C0.0001.L0.6"
-            elif group == 3:
-                algorithms[n] = "SVR.C1e-05.L0.6"
-            else:
-                algorithms[n] = "SVR.C1e-05.L0.7"
-        elif n == 5:
-            FEATURE = "Experiment_New_Data_"+str(group+1)+"_updrs_homoupdrs_elasso"
-            if group == 0:
-                algorithms[n] = "SVR.C1e-05.L0.1"
-            elif group == 1:
-                algorithms[n] = "SVR.C1e-05.L0.8"
-            elif group == 2:
-                algorithms[n] = "SVR.C1e-05.L0.4"
-            elif group == 3:
-                algorithms[n] = "SVR.C1e-05.L0.7"
-            else:
-                algorithms[n] = "SVR.C1e-05.L0.8"
-        elif n == 6:
-            FEATURE = "Experiment_New_Data_"+str(group+1)+"_updrs_homoupdrs"
-            if group == 0:
-                algorithms[n] = "RandomForest.I100.S2"
-            elif group == 1:
-                algorithms[n] = "RandomForest.I100.S1"
-            elif group == 2:
-                algorithms[n] = "RandomForest.I100.S1"
-            elif group == 3:
-                algorithms[n] = "RandomForest.I100.S4"
-            else:
-                algorithms[n] = "RandomForest.I100.S1"
-        elif n == 7:
-            FEATURE = "Experiment_New_Data_"+str(group+1)+"_updrs_homoupdrs_elasso"
-            if group == 0:
-                algorithms[n] = "RandomForest.I100.S1"
-            elif group == 1:
-                algorithms[n] = "RandomForest.I100.S6"
-            elif group == 2:
-                algorithms[n] = "RandomForest.I100.S4"
-            elif group == 3:
-                algorithms[n] = "RandomForest.I100.S5"
-            else:
-                algorithms[n] = "RandomForest.I100.S1"
+            FEATURE = "Experiment_New_Data_"+str(group+1)+"_updrs_homoupdrs_half_vowels"
         else:
-            FEATURE = "Experiment_New_Data_"+str(group+1)+"_updrs_homoupdrs"
+            FEATURE = "Experiment_New_Data_"+str(group+1)+"_updrs_homoupdrs_half_vowels_attributes"
+        if group == 0:
+            algorithms[n] = "SVR.C0.0001.L0.3.test"
+        elif group == 1:
+            algorithms[n] = "SVR.C0.001.L0.9.test"
+        elif group == 2:
+            algorithms[n] = "SVR.C0.001.L1.0.test"
+        elif group == 3:
+            algorithms[n] = "SVR.C1e-05.L0.8.test"
+        else:
+            algorithms[n] = "SVR.C0.0001.L0.9.test"
         if os.path.exists('eval/train_devel/'+FEATURE+'.'+algorithms[n]+'.pred'):
             if group == 0:
                 os.system("cp eval/train_devel/"+FEATURE+"."+algorithms[n]+".pred print_new_data_spearman_medium_"+pred_file[n]+".pred")
@@ -137,7 +89,7 @@ for n in range(len(algorithms)):
         if math.isnan(float(s[0])):
             s = [0]
         file.close()
-        f = open("print_new_data_spearman_medium.dep", "a")
+        f = open("print_new_data_spearman_medium_vowels.dep", "a")
         f.write("Results with " + pred_file[n] + "\n")
         f.write("Spearman correlation coefficient: " + str(s[0]) + "\n")
         f.write("REAL: " + str(valor_locutor) + "\n")

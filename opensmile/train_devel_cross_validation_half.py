@@ -3,23 +3,28 @@
 
 import os
 
-updrs = [25, 69, 0, 49, 66, 42, 27, 18, 38, 52, 56, 57, 74, 71, 50, 55, 87, 24, 23, 54, 59, 21, 22, 19, 6, 48]
+updrs = [1, 2, 0, 1, 2, 2, 1, 0, 0, 2, 1, 2, 3, 1, 2, 2, 2, 0, 0, 3, 2, 0, 1, 0, 0, 0]
 index_sort = [24, 18, 5, 19, 4, 7, 17, 25, 15, 1, 23, 0, 3, 10, 13, 21, 6, 14, 11, 12, 22, 8, 9, 20, 16]
-version = "homoupdrs"
-parkinson_class = ["updrs"]
+version = "homoupdrs_lenguaje_half"
+parkinson_class = ["lenguaje"]
 n_audios = 48
 n_locutores = 25
 n_grupos = 5
 
 if os.path.exists('extract.sh'):
 
+    for p in range(len(updrs)):
+        for a in range(n_audios+1):
+            if not os.path.exists("features/palabras_" + str(a+1) + "_" + str(p) + "_lenguaje.arff"):
+                os.system("./extract.sh palabras_" + str(a+1) + "_" + str(p) + ".ch1.wav palabras_" + str(a+1) + "_" + str(p) + "_lenguaje.arff "+ str(updrs[p]))
+
     # CROSS-VALIDATION
 
     for exp in range(len(parkinson_class)):
         for experiment in range(n_grupos):
-            train = open("features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+"_half.train.arff", "a")
-            devel = open("features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+"_half.devel.arff", "a")
-            test = open("features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+"_half.test.arff", "a")
+            train = open("features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+".train.arff", "a")
+            devel = open("features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+".devel.arff", "a")
+            test = open("features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+".test.arff", "a")
             group_train = 0
             if experiment == n_grupos-1:
                 group_train = 1
@@ -28,16 +33,16 @@ if os.path.exists('extract.sh'):
                     for audio in range(n_audios):
                         if group != (n_grupos-1)-experiment:
                             if group == group_train and pacient==0 and audio==0:
-                                os.system("cp features/palabras_1_" + str(index_sort[pacient+group*n_locutores/n_grupos]) + "_" + parkinson_class[exp] + ".arff features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+"_half.train.arff")
+                                os.system("cp features/palabras_1_" + str(index_sort[pacient+group*n_locutores/n_grupos]) + "_" + parkinson_class[exp] + ".arff features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+".train.arff")
                             else:
                                 file_train = open("features/palabras_" + str(audio+1) + "_" + str(index_sort[pacient+group*n_locutores/n_grupos]) + "_" + parkinson_class[exp] + ".arff", 'r')
                                 train.write(file_train.readlines()[-1])
                                 file_train.close()
                         else:
                             if pacient==0 and audio==0:
-                                os.system("cp features/palabras_1_" + str(index_sort[pacient+group*n_locutores/n_grupos]) + "_" + parkinson_class[exp] + ".arff features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+"_half.devel.arff")
+                                os.system("cp features/palabras_1_" + str(index_sort[pacient+group*n_locutores/n_grupos]) + "_" + parkinson_class[exp] + ".arff features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+".devel.arff")
                             elif pacient==0 and audio==1:
-                                os.system("cp features/palabras_2_" + str(index_sort[pacient+group*n_locutores/n_grupos]) + "_" + parkinson_class[exp] + ".arff features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+"_half.test.arff")
+                                os.system("cp features/palabras_2_" + str(index_sort[pacient+group*n_locutores/n_grupos]) + "_" + parkinson_class[exp] + ".arff features/Experiment_New_Data_"+str(experiment+1)+"_"+parkinson_class[exp]+"_"+version+".test.arff")
                             else:
                                 if audio%2==0:
                                     file_devel = open("features/palabras_" + str(audio+1) + "_" + str(index_sort[pacient+group*n_locutores/n_grupos]) + "_" + parkinson_class[exp] + ".arff", 'r')
@@ -53,9 +58,9 @@ if os.path.exists('extract.sh'):
 
     for i in range(len(parkinson_class)):
         for n in range(n_grupos):
-            os.system("cp features/Experiment_New_Data_"+str(n+1)+"_"+parkinson_class[i]+"_"+version+"_half.train.arff ../data/")
-            os.system("cp features/Experiment_New_Data_"+str(n+1)+"_"+parkinson_class[i]+"_"+version+"_half.devel.arff ../data/")
-            os.system("cp features/Experiment_New_Data_"+str(n+1)+"_"+parkinson_class[i]+"_"+version+"_half.test.arff ../data/")
+            os.system("cp features/Experiment_New_Data_"+str(n+1)+"_"+parkinson_class[i]+"_"+version+".train.arff ../data/")
+            os.system("cp features/Experiment_New_Data_"+str(n+1)+"_"+parkinson_class[i]+"_"+version+".devel.arff ../data/")
+            os.system("cp features/Experiment_New_Data_"+str(n+1)+"_"+parkinson_class[i]+"_"+version+".test.arff ../data/")
 
 else:
     f = open("print.dep", "a")

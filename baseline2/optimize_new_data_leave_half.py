@@ -5,7 +5,7 @@ import os
 import math
 
 index_sort = [25, 12, 5, 11, 23, 24, 13, 15, 14, 19, 22, 7, 4, 21, 9, 10, 1, 17, 0, 20, 8, 3, 6, 18, 16]
-version = "leave_half_vowels" # _attributes
+version = "leave_half"
 
 # Parameters:
 # C: c -- The complexity parameter C.(default 1.0).
