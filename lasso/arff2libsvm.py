@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
 
-# import sys
-
 def arff2libsvm(inputfilename, outputfilename):
     file_in = open(inputfilename,'r')
     lines = file_in.readlines()
@@ -25,30 +23,24 @@ def arff2libsvm(inputfilename, outputfilename):
             beginToRead = True
     file_out.close()
 
-# if(len(sys.argv) < 3):
-    # print("usage: python arff2libsvm.py inputfilename outputfilename")
-# else:
-    # inputfilename = sys.argv[1]
-    # outputfilename = sys.argv[2]
-    # arff2libsvm(inputfilename, outputfilename)
-
-parkinson_class = ["updrs", "hoenhyahr", "hoenhyahr_categorise"]
-version = "homoupdrs"
-n_pacientes = 26
-n_grupos = 5
-train_devel = ["train", "devel"]
+train_devel = ["train", "devel", "test"]
+version = "leave_half"
+version_two = "leave_half_two"
+version_all = "leave_half_all"
+index_sort = [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
 
 for t_d in range(len(train_devel)):
-    for i in range(len(parkinson_class)):
-        inputfilename = "../data/Experiment_New_Data_all_"+parkinson_class[i]+"_"+version+"."+train_devel[t_d]+".arff"
-        outputfilename = "../data/Experiment_New_Data_all_"+parkinson_class[i]+"_"+version+"."+train_devel[t_d]+".libsvm"
+    for pacient in range(len(index_sort)):
+        inputfilename = "../data/Experiment_New_Data_"+str(index_sort[pacient])+"_"+version+"."+train_devel[t_d]+".arff"
+        outputfilename = "../data/Experiment_New_Data_"+str(index_sort[pacient])+"_"+version+"."+train_devel[t_d]+".libsvm"
         arff2libsvm(inputfilename, outputfilename)
-        for n in range(n_grupos):
-            inputfilename = "../data/Experiment_New_Data_"+str(n+1)+"_"+parkinson_class[i]+"_"+version+"."+train_devel[t_d]+".arff"
-            outputfilename = "../data/Experiment_New_Data_"+str(n+1)+"_"+parkinson_class[i]+"_"+version+"."+train_devel[t_d]+".libsvm"
+for t_d in range(len(train_devel)):
+    for pacient in range(len(index_sort)):
+        if pacient != len(index_sort)-1:
+            inputfilename = "../data/Experiment_New_Data_"+str(index_sort[pacient])+"_"+str(index_sort[pacient+1])+"_"+version_two+"."+train_devel[t_d]+".arff"
+            outputfilename = "../data/Experiment_New_Data_"+str(index_sort[pacient])+"_"+str(index_sort[pacient+1])+"_"+version_two+"."+train_devel[t_d]+".libsvm"
             arff2libsvm(inputfilename, outputfilename)
-    for pacient in range(n_pacientes):
-        if pacient != 2:
-            inputfilename = "../data/Experiment_New_Data_"+str(pacient)+"_leave_one."+train_devel[t_d]+".arff"
-            outputfilename = "../data/Experiment_New_Data_"+str(pacient)+"_leave_one."+train_devel[t_d]+".libsvm"
-            arff2libsvm(inputfilename, outputfilename)
+for t_d in range(len(train_devel)):
+    inputfilename = "../data/Experiment_New_Data_"+version_all+"."+train_devel[t_d]+".arff"
+    outputfilename = "../data/Experiment_New_Data_"+version_all+"."+train_devel[t_d]+".libsvm"
+    arff2libsvm(inputfilename, outputfilename)

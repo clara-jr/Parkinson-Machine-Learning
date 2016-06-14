@@ -4,8 +4,8 @@
 import os
 import math
 
-index_sort = [25, 12, 5, 11, 23, 24, 13, 15, 14, 19, 22, 7, 4, 21, 9, 10, 1, 17, 0, 20, 8, 3, 6, 18, 16]
-version = "leave_half"
+index_sort = [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+version = "leave_half_elasso"
 
 # Parameters:
 # C: c -- The complexity parameter C.(default 1.0).
@@ -27,7 +27,7 @@ def frange(start, stop, step=1.0):
 
 # Greedy - Find optimal parameter C for L=1.0 static -> Find optimal parameter L for C=optimalC static
 
-if os.path.exists('baseline_svm_arff.sh'):
+if os.path.exists('baseline_svm_libsvm.sh'):
 
     for pacient in range(len(index_sort)):
 
@@ -44,7 +44,7 @@ if os.path.exists('baseline_svm_arff.sh'):
             values = []
             err_comparison = []
             string = []
-            parallel = "parallel -j " + str(experiments[cont]) + " ./baseline_svm_arff.sh {1} {2} " + FEATURE
+            parallel = "parallel -j " + str(experiments[cont]) + " ./baseline_svm_libsvm.sh {1} {2} " + FEATURE
             for i in range(len(params)):
                 string.append(" ::: " + str(params[i]))
             string[cont] = " :::"
@@ -108,7 +108,7 @@ if os.path.exists('baseline_svm_arff.sh'):
 
         f.write("Retraining final model with test set C = " + str(params[0]) + " and L = " + str(params[1]) + "\n")
         f.close()
-        os.system('./baseline_svm_arff.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
+        os.system('./baseline_svm_libsvm.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
         file = open('eval/train_devel/Experiment_New_Data_'+str(index_sort[pacient])+'_'+version+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.test.pred', 'r')
         data = file.readlines();
         valor = 0
@@ -148,5 +148,5 @@ if os.path.exists('baseline_svm_arff.sh'):
 
 else:
     f = open("print_new_data.dep", "a")
-    f.write("The bash script baseline_svm_arff.sh has not been created")
+    f.write("The bash script baseline_svm_libsvm.sh has not been created")
     f.close()

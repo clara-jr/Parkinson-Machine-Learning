@@ -6,8 +6,8 @@ import os
 updrs = [1, 2, 0, 1, 2, 2, 1, 0, 0, 2, 1, 2, 3, 1, 2, 2, 2, 0, 0, 3, 2, 0, 1, 0, 0, 0]
 index_sort = [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
 n_audios = 48
-version = "leave_half_lenguaje"
-parkinson_class = "lenguaje"
+version = "leave_half"
+parkinson_class = "updrs"
 
 if os.path.exists('extract.sh'):
 
