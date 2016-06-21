@@ -3,8 +3,11 @@
 
 import os
 import math
+import scipy
+from scipy import stats
 
 version = "leave_half_all_elasso"
+n_locutores_half = 25
 
 # Parameters:
 # C: c -- The complexity parameter C.(default 1.0).
@@ -39,7 +42,7 @@ if os.path.exists('baseline_svm_libsvm.sh'):
 
     for cont in range(len(params)):
         values = []
-        err_comparison = []
+        spearman_comparison = []
         string = []
         parallel = "parallel -j " + str(experiments[cont]) + " ./baseline_svm_libsvm.sh {1} {2} " + FEATURE
         for i in range(len(params)):
@@ -59,7 +62,7 @@ if os.path.exists('baseline_svm_libsvm.sh'):
             if os.path.exists('eval/train_devel/Experiment_New_Data_'+version+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred'):
                 file = open('eval/train_devel/Experiment_New_Data_'+version+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.pred', 'r')
                 data = file.readlines();
-                valor = 0
+                valor = []
                 pred = []
                 err = []
                 for x in data:
@@ -69,15 +72,26 @@ if os.path.exists('baseline_svm_libsvm.sh'):
                         if line[l] != '':
                             line_rel.append(line[l])
                     if len(line_rel) == 5:
-                        valor = float(line_rel[1])
+                        valor.append(float(line_rel[1]))
                         pred.append(float(line_rel[2]))
                         err.append(float(line_rel[3]))
-                error = 0
-                pred_medium = 0
-                for p in range(len(pred)):
-                    pred_medium += pred[p]/len(pred)
-                error = abs(pred_medium-valor)/valor
-                err_comparison.append(float(error))
+                pred_locutor = []
+                valor_locutor = []
+                for ini in range(n_locutores_half):
+                    pred_locutor.append(0)
+                    valor_locutor.append(0)
+                error_rel = 0
+                error_abs = 0
+                for locutor in range(n_locutores_half):
+                    valor_locutor[locutor] = valor[(len(pred)/n_locutores_half)*locutor]
+                    for p in range(len(pred)/n_locutores_half):
+                        pred_locutor[locutor] += pred[p+(len(pred)/n_locutores_half)*locutor]/(len(pred)/n_locutores_half)
+                    error_abs += abs(pred_locutor[locutor]-valor_locutor[locutor])/n_locutores_half
+                    error_rel += (abs(pred_locutor[locutor]-valor_locutor[locutor])/valor_locutor[locutor])/n_locutores_half
+                s = scipy.stats.spearmanr(valor_locutor, pred_locutor)
+                if math.isnan(float(s[0])):
+                    s = [0]
+                spearman_comparison.append(float(s[0]))
                 rmse = 0
                 for e in range(len(err)):
                     rmse += err[e]*err[e]/len(pred)
@@ -85,18 +99,19 @@ if os.path.exists('baseline_svm_libsvm.sh'):
                 file.close()
                 f = open("print_new_data_"+version+".dep", "a")
                 f.write("Results for model C="+str(params[0])+" L="+str(params[1]) + "\n")
-                f.write("UPDRS: " + str(valor) + "\n")
-                f.write("PREDICTION: " + str(pred_medium) + "\n")
+                f.write("REAL: " + str(valor_locutor) + "\n")
+                f.write("PREDICTION: " + str(pred_locutor) + "\n")
                 f.write("RMSE: " + str(rmse) + "\n")
-                f.write("ABSOLUTE ERROR: " + str(abs(pred_medium-valor)) + "\n")
-                f.write("RELATIVE ERROR: " + str(error) + "\n")
+                f.write("ABSOLUTE ERROR: " + str(error_abs) + "\n")
+                f.write("RELATIVE ERROR: " + str(error_rel) + "\n")
+                f.write("Spearman correlation coefficient: " + str(s[0]) + "\n")
                 f.close()
             else:
-                err_comparison.append(100)
+                spearman_comparison.append(-1)
                 f = open("print_new_data_"+version+".dep", "a")
                 f.write("The pred file for C="+str(params[0])+" and L="+str(params[1])+" has not been created" + "\n")
                 f.close()
-        index = err_comparison.index(min(err_comparison))
+        index = spearman_comparison.index(max(spearman_comparison))
         params[cont] = values[index]
 
     f = open("print_new_data_"+version+".dep", "a")
@@ -108,7 +123,7 @@ if os.path.exists('baseline_svm_libsvm.sh'):
     os.system('./baseline_svm_libsvm.sh '+str(params[0])+' '+str(params[1])+' '+FEATURE)
     file = open('eval/train_devel/Experiment_New_Data_'+version+'.SVR.C'+str(params[0])+'.L'+str(params[1])+'.test.pred', 'r')
     data = file.readlines();
-    valor = 0
+    valor = []
     pred = []
     err = []
     for x in data:
@@ -118,32 +133,42 @@ if os.path.exists('baseline_svm_libsvm.sh'):
             if line[l] != '':
                 line_rel.append(line[l])
         if len(line_rel) == 5:
-            valor = float(line_rel[1])
+            valor.append(float(line_rel[1]))
             pred.append(float(line_rel[2]))
             err.append(float(line_rel[3]))
-    error = 0
-    pred_medium = 0
-    for p in range(len(pred)):
-        pred_medium += pred[p]/len(pred)
-    error = abs(pred_medium-valor)/valor
+    pred_locutor = []
+    valor_locutor = []
+    for ini in range(n_locutores_half):
+        pred_locutor.append(0)
+        valor_locutor.append(0)
+    error_rel = 0
+    error_abs = 0
+    for locutor in range(n_locutores_half):
+        valor_locutor[locutor] = valor[(len(pred)/n_locutores_half)*locutor]
+        for p in range(len(pred)/n_locutores_half):
+            pred_locutor[locutor] += pred[p+(len(pred)/n_locutores_half)*locutor]/(len(pred)/n_locutores_half)
+        error_abs += abs(pred_locutor[locutor]-valor_locutor[locutor])/n_locutores_half
+        error_rel += (abs(pred_locutor[locutor]-valor_locutor[locutor])/valor_locutor[locutor])/n_locutores_half
+    s = scipy.stats.spearmanr(valor_locutor, pred_locutor)
+    if math.isnan(float(s[0])):
+        s = [0]
+    spearman_comparison.append(float(s[0]))
     rmse = 0
     for e in range(len(err)):
         rmse += err[e]*err[e]/len(pred)
-        err[e] = abs(err[e])
     rmse = math.sqrt(rmse)
-    index_min = err.index(min(err))
-    index_max = err.index(max(err))
     file.close()
     f = open("print_new_data_"+version+".dep", "a")
-    f.write("UPDRS: " + str(valor) + "\n")
-    f.write("PREDICTION: " + str(pred_medium) + "\n")
+    f.write("Results for model C="+str(params[0])+" L="+str(params[1]) + "\n")
+    f.write("REAL: " + str(valor_locutor) + "\n")
+    f.write("PREDICTION: " + str(pred_locutor) + "\n")
     f.write("RMSE: " + str(rmse) + "\n")
-    f.write("ABSOLUTE ERROR: " + str(abs(pred_medium-valor)) + "\n")
-    f.write("RELATIVE ERROR final: " + str(error) + "\n")
-    f.write("Best result with audio: " + str(index_min+1) + " Relative error: " + str(err[index_min]/valor) + "\n")
-    f.write("Worst result with audio: " + str(index_max+1) + " Relative error: " + str(err[index_max]/valor) + "\n")
+    f.write("ABSOLUTE ERROR: " + str(error_abs) + "\n")
+    f.write("RELATIVE ERROR: " + str(error_rel) + "\n")
+    f.write("Spearman correlation coefficient: " + str(s[0]) + "\n")
+    f.close()
 
 else:
-    f = open("print_new_data.dep", "a")
+    f = open("print_new_data_"+version+".dep", "a")
     f.write("The bash script baseline_svm_libsvm.sh has not been created")
     f.close()

@@ -23,10 +23,10 @@ if os.path.exists('extract.sh'):
         pacient_train_inic = 0
         if pacient_devel != len(index_sort)-1:
             train = open("features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_"+str(index_sort[pacient_devel+1])+"_"+version+".train.arff", "a")
-            devel = open("features/Experiment_New_Data_"++str(index_sort[pacient_devel])+"_"+str(index_sort[pacient_devel+1])+"_"+version+".devel.arff", "a") # audios impares 1-47
-            test = open("features/Experiment_New_Data_"++str(index_sort[pacient_devel])+"_"+str(index_sort[pacient_devel+1])+"_"+version+".test.arff", "a") # audios pares 2-48
-            os.system("cp features/palabras_1_" + str(index_sort[pacient_devel]) + "_"+parkinson_class+".arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_"+version+".devel.arff")
-            os.system("cp features/palabras_2_" + str(index_sort[pacient_devel]) + "_"+parkinson_class+".arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_"+version+".test.arff")
+            devel = open("features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_"+str(index_sort[pacient_devel+1])+"_"+version+".devel.arff", "a") # audios impares 1-47
+            test = open("features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_"+str(index_sort[pacient_devel+1])+"_"+version+".test.arff", "a") # audios pares 2-48
+            os.system("cp features/palabras_1_" + str(index_sort[pacient_devel]) + "_"+parkinson_class+".arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_"+str(index_sort[pacient_devel+1])+"_"+version+".devel.arff")
+            os.system("cp features/palabras_2_" + str(index_sort[pacient_devel]) + "_"+parkinson_class+".arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_"+str(index_sort[pacient_devel+1])+"_"+version+".test.arff")
             for pacient in range(leave):
                 for audio in range(n_audios):
                     if pacient == 0:
@@ -48,8 +48,8 @@ if os.path.exists('extract.sh'):
                             file_test = open("features/palabras_" + str(audio+1) + "_" + str(index_sort[pacient_devel+1]) + "_"+parkinson_class+".arff", 'r')
                             test.write(file_test.readlines()[-1])
                             file_test.close()
-                devel.close()
-                test.close()
+            devel.close()
+            test.close()
             if pacient_devel != 0:
                 os.system("cp features/palabras_1_0_"+parkinson_class+".arff features/Experiment_New_Data_"+str(index_sort[pacient_devel])+"_"+str(index_sort[pacient_devel+1])+"_"+version+".train.arff")
             else:
