@@ -9,9 +9,10 @@ import math
 os.system("rm print_new_data_spearman_leave_half_without_medium.dep")
 algorithms = ["SVR.C1e-05.L0.9.test", "SVR.C0.0001.L1.0.test", "", "SVR.C0.001.L0.9.test", "SVR.C0.0001.L1.0.test", "SVR.C1e-05.L1.0.test", "SVR.C0.001.L0.1.test", "SVR.C1e-05.L0.7.test", "SVR.C1e-05.L0.7.test", "SVR.C0.001.L0.2.test", "SVR.C1e-05.L0.1.test", "SVR.C1e-05.L1.0.test", "SVR.C0.001.L0.1.test", "SVR.C0.001.L1.0.test", "SVR.C0.001.L0.7.test", "SVR.C1e-05.L0.1.test", "SVR.C1e-05.L0.1.test", "SVR.C1e-05.L0.9.test", "SVR.C0.001.L0.3.test", "SVR.C0.001.L1.0.test", "SVR.C0.001.L1.0.test", "SVR.C1e-05.L0.8.test", "SVR.C1e-05.L0.7.test", "SVR.C1e-05.L0.8.test", "SVR.C0.0001.L0.2.test", "SVR.C1e-05.L0.1.test"]
 n_locutores = 26
+paciente_desconocido = 2
 
 for pacient in range(n_locutores):
-    if pacient != 2:
+    if pacient != paciente_desconocido:
         FEATURE = "Experiment_New_Data_"+str(pacient)+"_leave_half"
         if os.path.exists('eval/train_devel/'+FEATURE+'.'+algorithms[pacient]+'.pred') :
             if pacient == 0:
@@ -45,7 +46,7 @@ if os.path.exists('print_new_data_spearman_leave_half_without_medium.pred'):
                 line_rel.append(line[l])
         if len(line_rel) == 5:
             valor.append(float(line_rel[1]))
-            pred.append(float(line_rel[3]))
+            pred.append(float(line_rel[2]))
             err_abs.append(abs(float(line_rel[3])))
             err_rel.append(abs(float(line_rel[3]))/float(line_rel[1]))
     error_abs = 0

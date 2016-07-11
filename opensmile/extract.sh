@@ -4,7 +4,7 @@
 wav_dir=wavs
 wav_file=${1}
 
-# path to your feature directory (LibSVM files)
+# path to your feature directory (arff files)
 feat_dir=features
 feat_file=${2}
 
